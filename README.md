@@ -18,6 +18,13 @@ This is the file that I was running on `https://webrtcweb.com:9559/`. I'll recom
 npm install socketio-over-nodejs
 ```
 
+# How to spin on docker host
+
+```
+docker build https://github.com/romansavrulin/socket-io-signalling.git -t socketio
+docker run -d --restart always -p 9559:9559 socketio
+```
+
 # How to use?
 
 In `ui.js` files you can find `openSocket` method; or in all libraries; you can find `openSignalingChannel` method.
