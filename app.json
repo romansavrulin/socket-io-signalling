@@ -1,0 +1,6 @@
+{
+  "name": "Node.js Socket.io Example",
+  "description": "Part of Webrtc signalling backend",
+  "repository": "https://github.com/muaz-khan/WebRTC-Experiment/tree/master/socketio-over-nodejs",
+  "keywords": ["node", "websocket", "socket.io", "webrtc"]
+}
