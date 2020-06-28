@@ -29,7 +29,7 @@ var io = require('socket.io').listen(app, {
 });
 
 io.set('transports', [
-    // 'websocket',
+    'websocket',
     'xhr-polling',
     'jsonp-polling'
 ]);
@@ -41,11 +41,14 @@ io.sockets.on('connection', function (socket) {
     if (!io.isConnected) {
         io.isConnected = true;
     }
+    console.log("Connected!");
 
     socket.on('new-channel', function (data) {
         if (!channels[data.channel]) {
             initiatorChannel = data.channel;
         }
+
+        console.log("New Channel: " + data.channel);
 
         channels[data.channel] = data.channel;
         onNewNamespace(data.channel, data.sender);
@@ -54,16 +57,20 @@ io.sockets.on('connection', function (socket) {
     socket.on('presence', function (channel) {
         var isChannelPresent = !! channels[channel];
         socket.emit('presence', isChannelPresent);
+        console.log("Presence!");
     });
 
     socket.on('disconnect', function (channel) {
         if (initiatorChannel) {
+            console.log("Disconnect initiator!");
             delete channels[initiatorChannel];
-        }
+        } else
+            console.log("Disconnect!");
     });
 });
 
 function onNewNamespace(channel, sender) {
+    console.log("New Namespace for channel: " +  channel)
     io.of('/' + channel).on('connection', function (socket) {
         var username;
         if (io.isConnected) {
@@ -71,16 +78,23 @@ function onNewNamespace(channel, sender) {
             socket.emit('connect', true);
         }
 
+        console.log("Namespace Connect!")
+
         socket.on('message', function (data) {
+            console.log("Message!" + data)
             if (data.sender == sender) {
                 if(!username) username = data.data.sender;
-                
+
+                console.log("Message == sender")
+
                 socket.broadcast.emit('message', data.data);
             }
         });
-        
+
         socket.on('disconnect', function() {
+            console.log("Namespace Disconnect!")
             if(username) {
+                console.log("User Left")
                 socket.broadcast.emit('user-left', username);
                 username = null;
             }
